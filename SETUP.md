@@ -68,25 +68,17 @@ JWT_SECRET=your-long-random-secret-at-least-32-characters
 SETUP_KEY=your-optional-setup-key
 ```
 
-### 6. Start the development servers
+### 6. Build and start the dev server
 
-Open **two terminals** in the project directory:
-
-**Terminal 1 — Vite frontend (HMR):**
 ```bash
-npm run dev
-```
-
-**Terminal 2 — Wrangler (functions + D1):**
-```bash
-npm run dev:wrangler
+npm run build         # compile frontend into dist/
+npm run dev:wrangler  # serve dist/ + run Pages Functions + D1
 ```
 
 Open http://localhost:8788 in your browser.
 
-> Wrangler proxies all non-API requests to Vite (port 5173) and handles `/api/*`
-> routes itself using Pages Functions + D1. This avoids the refresh loop that
-> occurs when running `wrangler pages dev dist` against a static build.
+> When you change frontend code, run `npm run build` again and refresh the browser.
+> Function changes (files under `functions/`) are picked up automatically by Wrangler.
 
 ### 7. Create your account
 Navigate to http://localhost:8788/setup to create your account.
