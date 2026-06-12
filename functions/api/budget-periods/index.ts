@@ -1,5 +1,5 @@
-import { success, error, parseBody, generateId, nowISO } from '../../../_shared/response';
-import type { Env } from '../../../_shared/types';
+﻿import { success, error, parseBody, generateId, nowISO } from '../../_shared/response';
+import type { Env } from '../../_shared/types';
 
 interface PeriodRow {
   id: string; name: string; start_date: string; end_date: string; status: string; created_at: string; updated_at: string;

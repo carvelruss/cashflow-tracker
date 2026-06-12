@@ -1,6 +1,6 @@
-import { hashPassword } from '../../../_shared/auth';
-import { json, success, error, parseBody, generateId, nowISO } from '../../../_shared/response';
-import type { Env } from '../../../_shared/types';
+﻿import { hashPassword } from '../../_shared/auth';
+import { json, success, error, parseBody, generateId, nowISO } from '../../_shared/response';
+import type { Env } from '../../_shared/types';
 
 interface SetupBody {
   email: string;

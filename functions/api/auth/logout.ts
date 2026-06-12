@@ -1,4 +1,4 @@
-import type { Env } from '../../../_shared/types';
+﻿import type { Env } from '../../_shared/types';
 
 export const onRequestPost: PagesFunction<Env> = async () => {
   const expiredCookie = 'auth_token=; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Path=/';

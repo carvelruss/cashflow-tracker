@@ -1,5 +1,5 @@
-import { success, error, parseBody, notFound, noContent, nowISO } from '../../../_shared/response';
-import type { Env } from '../../../_shared/types';
+import { success, error, parseBody, notFound, noContent, nowISO } from '../../_shared/response';
+import type { Env } from '../../_shared/types';
 
 interface ExpenseRow {
   id: string; user_id: string; name: string; category: string;

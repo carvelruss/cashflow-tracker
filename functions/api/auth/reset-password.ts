@@ -1,6 +1,6 @@
-import { generateSecureToken } from '../../../_shared/auth';
-import { success, error, parseBody, generateId, nowISO } from '../../../_shared/response';
-import type { Env } from '../../../_shared/types';
+﻿import { generateSecureToken } from '../../_shared/auth';
+import { success, error, parseBody, generateId, nowISO } from '../../_shared/response';
+import type { Env } from '../../_shared/types';
 
 export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
   const body = await parseBody<{ email: string }>(request);

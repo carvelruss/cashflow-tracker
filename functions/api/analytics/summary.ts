@@ -1,5 +1,5 @@
-import { success, error } from '../../../_shared/response';
-import type { Env } from '../../../_shared/types';
+﻿import { success, error } from '../../_shared/response';
+import type { Env } from '../../_shared/types';
 
 export const onRequestGet: PagesFunction<Env> = async ({ env, data, request }) => {
   const userId = data.userId as string;

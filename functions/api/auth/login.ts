@@ -1,6 +1,6 @@
-import { verifyPassword, createJWT } from '../../../_shared/auth';
-import { success, error, parseBody } from '../../../_shared/response';
-import type { Env } from '../../../_shared/types';
+﻿import { verifyPassword, createJWT } from '../../_shared/auth';
+import { success, error, parseBody } from '../../_shared/response';
+import type { Env } from '../../_shared/types';
 
 interface LoginBody {
   email: string;

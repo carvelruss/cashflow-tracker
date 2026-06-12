@@ -1,5 +1,5 @@
-import { success, error, parseBody, notFound, generateId, nowISO } from '../../../../_shared/response';
-import type { Env } from '../../../../_shared/types';
+import { success, error, parseBody, notFound, generateId, nowISO } from '../../../_shared/response';
+import type { Env } from '../../../_shared/types';
 
 export const onRequestGet: PagesFunction<Env> = async ({ env, data, params }) => {
   const goal = await env.DB.prepare('SELECT id FROM savings_goals WHERE id = ? AND user_id = ?')

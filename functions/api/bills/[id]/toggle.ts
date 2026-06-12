@@ -1,5 +1,5 @@
-import { success, notFound, nowISO } from '../../../../_shared/response';
-import type { Env } from '../../../../_shared/types';
+import { success, notFound, nowISO } from '../../../_shared/response';
+import type { Env } from '../../../_shared/types';
 
 export const onRequestPost: PagesFunction<Env> = async ({ env, data, params }) => {
   const id = params.id as string;

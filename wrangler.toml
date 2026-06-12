@@ -5,7 +5,7 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "cashflow-tracker-db"
-database_id = "YOUR_D1_DATABASE_ID"
+database_id = "e533eeb3-ad8b-44db-aa09-5bcb0b26274c"
 
 # Set secrets via Cloudflare dashboard or:
 # wrangler secret put JWT_SECRET

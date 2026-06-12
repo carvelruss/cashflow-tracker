@@ -1,5 +1,5 @@
-import { success, error, parseBody, notFound, noContent, nowISO } from '../../../_shared/response';
-import type { Env } from '../../../_shared/types';
+import { success, error, parseBody, notFound, noContent, nowISO } from '../../_shared/response';
+import type { Env } from '../../_shared/types';
 
 interface GoalRow {
   id: string; user_id: string; goal_name: string; target_amount: number;

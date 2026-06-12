@@ -1,6 +1,6 @@
-import { verifyJWT, getTokenFromRequest } from '../../_shared/auth';
-import { unauthorized } from '../../_shared/response';
-import type { Env } from '../../_shared/types';
+﻿import { verifyJWT, getTokenFromRequest } from '../_shared/auth';
+import { unauthorized } from '../_shared/response';
+import type { Env } from '../_shared/types';
 
 const PUBLIC_PATHS = [
   '/api/auth/login',
