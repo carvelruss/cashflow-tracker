@@ -17,7 +17,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   });
 
   if (res.status === 401) {
-    window.location.href = '/login';
+    const pub = ['/login', '/setup', '/reset-password'];
+    if (!pub.some(p => window.location.pathname.startsWith(p))) {
+      window.location.href = '/login';
+    }
     throw new ApiError('Unauthorized', 401);
   }
 
