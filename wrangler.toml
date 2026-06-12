@@ -1,0 +1,12 @@
+name = "cashflow-tracker"
+compatibility_date = "2024-09-02"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cashflow-tracker-db"
+database_id = "YOUR_D1_DATABASE_ID"
+
+# Set secrets via Cloudflare dashboard or:
+# wrangler secret put JWT_SECRET
+# wrangler secret put SETUP_KEY
