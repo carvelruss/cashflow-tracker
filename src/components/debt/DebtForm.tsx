@@ -1,9 +1,10 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../ui/Input';
 import Textarea from '../ui/Textarea';
 import Button from '../ui/Button';
+import DatePicker from '../ui/DatePicker';
 import type { Debt } from '../../types';
 
 const schema = z.object({
@@ -25,7 +26,7 @@ interface DebtFormProps {
 }
 
 export default function DebtForm({ debt, budgetPeriodId, onSubmit, onCancel }: DebtFormProps) {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: debt ? {
       name: debt.name, creditor: debt.creditor, original_amount: debt.original_amount,
@@ -42,13 +43,15 @@ export default function DebtForm({ debt, budgetPeriodId, onSubmit, onCancel }: D
     <form onSubmit={submit} className="space-y-4">
       <Input label="Debt Name" placeholder="e.g., Car Loan, Credit Card" required error={errors.name?.message} {...register('name')} />
       <Input label="Creditor" placeholder="e.g., BPI, BDO, SSS" required error={errors.creditor?.message} {...register('creditor')} />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 items-end">
         <Input label="Original Amount (₱)" type="number" step="0.01" required error={errors.original_amount?.message} {...register('original_amount')} />
         <Input label="Remaining Balance (₱)" type="number" step="0.01" required error={errors.remaining_balance?.message} {...register('remaining_balance')} />
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 items-end">
         <Input label="Monthly Payment (₱)" type="number" step="0.01" error={errors.monthly_payment?.message} {...register('monthly_payment')} />
-        <Input label="Due Date" type="date" error={errors.due_date?.message} {...register('due_date')} />
+        <Controller control={control} name="due_date" render={({ field }) => (
+          <DatePicker label="Due Date" error={errors.due_date?.message} value={field.value ?? ''} onChange={field.onChange} />
+        )} />
       </div>
       <Textarea label="Notes" placeholder="Optional notes" rows={2} {...register('notes')} />
       <div className="flex gap-2 justify-end pt-2">

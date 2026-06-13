@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { CreditCard, Plus, Edit2, Trash2, Search } from 'lucide-react';
 import { api } from '../lib/api';
 import { useBudgetPeriod } from '../context/BudgetPeriodContext';
@@ -13,15 +14,10 @@ import ConfirmDialog from '../components/ui/ConfirmDialog';
 import EmptyState from '../components/ui/EmptyState';
 import { PageLoader } from '../components/ui/LoadingSpinner';
 import Alert from '../components/ui/Alert';
-import Badge from '../components/ui/Badge';
 import ExpenseForm from '../components/expenses/ExpenseForm';
 import type { Expense } from '../types';
 import { EXPENSE_CATEGORIES } from '../types';
 
-const CATEGORY_COLORS: Record<string, 'default' | 'success' | 'warning' | 'danger' | 'info' | 'purple' | 'sky'> = {
-  Food: 'warning', Transportation: 'info', Shopping: 'purple', Entertainment: 'sky',
-  Healthcare: 'success', Education: 'info', Utilities: 'default', 'Personal Care': 'purple', Miscellaneous: 'default',
-};
 
 export default function ExpensesPage() {
   const { activePeriod } = useBudgetPeriod();
@@ -62,6 +58,7 @@ export default function ExpensesPage() {
 
   const total = expenses.reduce((s, e) => s + e.amount, 0);
   const catOptions = EXPENSE_CATEGORIES.map(c => ({ value: c, label: c }));
+  const isClosed = activePeriod?.status === 'closed';
 
   // Group by category
   const byCategory = expenses.reduce<Record<string, number>>((acc, e) => {
@@ -73,15 +70,16 @@ export default function ExpensesPage() {
   if (loading && expenses.length === 0) return <PageLoader />;
 
   return (
-    <div className="max-w-4xl space-y-4">
+    <div className="space-y-4">
       <div className="page-header">
         <div>
           <h1 className="page-title">Expenses</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Total: <span className="font-semibold text-red-600 dark:text-red-400">{formatPeso(total)}</span></p>
         </div>
-        <Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Expense</Button>
+        {!isClosed && <Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Expense</Button>}
       </div>
 
+      {isClosed && <Alert variant="warning">This period is closed and read-only. <Link to="/budget-periods" className="underline font-medium">Create a new period</Link> to add entries.</Alert>}
       {error && <Alert variant="error">{error}</Alert>}
 
       {/* Category summary */}
@@ -102,19 +100,16 @@ export default function ExpensesPage() {
       </div>
 
       {expenses.length === 0 && !loading ? (
-        <EmptyState icon={<CreditCard className="w-6 h-6" />} title="No expenses found" action={<Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Expense</Button>} />
+        <EmptyState icon={<CreditCard className="w-6 h-6" />} title="No expenses found" />
       ) : (
         <Card padding="none">
-          <CardHeader title="Expenses" action={<span className="text-sm font-semibold text-red-600">{formatPeso(total)}</span>} />
+          <CardHeader title="Expenses" className="px-5 pt-5" />
           <div className="divide-y divide-slate-100 dark:divide-slate-700">
             {expenses.map(item => (
               <div key={item.id} className="flex items-center gap-3 px-5 py-3">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{item.name}</p>
-                    <Badge variant={CATEGORY_COLORS[item.category] ?? 'default'} size="sm">{item.category}</Badge>
-                  </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{formatDate(item.date)}</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{item.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{item.category} · {formatDate(item.date)}</p>
                 </div>
                 <p className="font-semibold text-red-600 dark:text-red-400 text-sm shrink-0">{formatPeso(item.amount)}</p>
                 <div className="flex gap-1 shrink-0">

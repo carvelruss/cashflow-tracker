@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { TrendingDown, Plus, Edit2, Trash2, DollarSign } from 'lucide-react';
 import { api } from '../lib/api';
 import { useBudgetPeriod } from '../context/BudgetPeriodContext';
@@ -55,12 +56,13 @@ export default function DebtPage() {
 
   const totalBalance = debts.reduce((s, d) => s + d.remaining_balance, 0);
   const totalOriginal = debts.reduce((s, d) => s + d.original_amount, 0);
+  const isClosed = activePeriod?.status === 'closed';
 
   if (!activePeriod) return <EmptyState icon={<TrendingDown className="w-6 h-6" />} title="No Budget Period Selected" />;
   if (loading && debts.length === 0) return <PageLoader />;
 
   return (
-    <div className="max-w-4xl space-y-4">
+    <div className="space-y-4">
       <div className="page-header">
         <div>
           <h1 className="page-title">Debt</h1>
@@ -69,13 +71,14 @@ export default function DebtPage() {
             {totalOriginal > 0 && <span className="ml-2 text-xs">({calcPercent(totalBalance, totalOriginal).toFixed(0)}% of original)</span>}
           </p>
         </div>
-        <Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Debt</Button>
+        {!isClosed && <Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Debt</Button>}
       </div>
 
+      {isClosed && <Alert variant="warning">This period is closed and read-only. <Link to="/budget-periods" className="underline font-medium">Create a new period</Link> to add entries.</Alert>}
       {error && <Alert variant="error">{error}</Alert>}
 
       {debts.length === 0 && !loading ? (
-        <EmptyState icon={<TrendingDown className="w-6 h-6" />} title="No debts tracked" description="Add debts to track your repayment progress." action={<Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Debt</Button>} />
+        <EmptyState icon={<TrendingDown className="w-6 h-6" />} title="No debts tracked" description="Add debts to track your repayment progress." />
       ) : (
         <div className="space-y-3">
           {debts.map(debt => {
@@ -101,7 +104,7 @@ export default function DebtPage() {
                     <div className="flex items-center justify-between">
                       <p className="text-xs text-slate-500">Monthly: <span className="font-medium">{formatPeso(debt.monthly_payment)}</span> · Paid off: <span className="font-medium">{paidPct.toFixed(0)}%</span></p>
                       <div className="flex gap-1">
-                        <Button size="xs" variant="secondary" icon={<DollarSign className="w-3 h-3" />} onClick={() => setPaying(debt)}>Pay</Button>
+                        {!isClosed && <Button size="xs" variant="secondary" icon={<DollarSign className="w-3 h-3" />} onClick={() => setPaying(debt)}>Pay</Button>}
                         <button onClick={() => setEditing(debt)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"><Edit2 className="w-4 h-4" /></button>
                         <button onClick={() => setDeleting(debt)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"><Trash2 className="w-4 h-4" /></button>
                       </div>

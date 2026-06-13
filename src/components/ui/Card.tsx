@@ -27,10 +27,10 @@ export default function Card({ children, className, padding = 'md', hover, onCli
   );
 }
 
-interface CardHeaderProps { title: string; subtitle?: string; action?: ReactNode; }
-export function CardHeader({ title, subtitle, action }: CardHeaderProps) {
+interface CardHeaderProps { title: string; subtitle?: string; action?: ReactNode; className?: string; }
+export function CardHeader({ title, subtitle, action, className }: CardHeaderProps) {
   return (
-    <div className="flex items-start justify-between mb-4">
+    <div className={cn('flex items-start justify-between mb-4', className)}>
       <div>
         <h3 className="section-title">{title}</h3>
         {subtitle && <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{subtitle}</p>}

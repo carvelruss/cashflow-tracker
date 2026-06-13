@@ -1,9 +1,10 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../ui/Input';
 import Textarea from '../ui/Textarea';
 import Button from '../ui/Button';
+import DatePicker from '../ui/DatePicker';
 import { formatDateInput } from '../../utils/date';
 
 const schema = z.object({
@@ -20,7 +21,7 @@ interface ContributionFormProps {
 }
 
 export default function ContributionForm({ goalName, onSubmit, onCancel }: ContributionFormProps) {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { contribution_date: formatDateInput() },
   });
@@ -29,7 +30,9 @@ export default function ContributionForm({ goalName, onSubmit, onCancel }: Contr
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <p className="text-sm text-slate-600 dark:text-slate-400">Adding contribution to: <strong className="text-slate-900 dark:text-white">{goalName}</strong></p>
       <Input label="Amount (₱)" type="number" step="0.01" required error={errors.amount?.message} {...register('amount')} />
-      <Input label="Contribution Date" type="date" required error={errors.contribution_date?.message} {...register('contribution_date')} />
+      <Controller control={control} name="contribution_date" render={({ field }) => (
+        <DatePicker label="Contribution Date" required error={errors.contribution_date?.message} value={field.value ?? ''} onChange={field.onChange} />
+      )} />
       <Textarea label="Notes" placeholder="Optional notes" rows={2} {...register('notes')} />
       <div className="flex gap-2 justify-end pt-2">
         <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>

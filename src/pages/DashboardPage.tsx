@@ -27,13 +27,13 @@ interface SummaryCardProps {
 
 function SummaryCard({ title, value, icon, color, bg, subtext }: SummaryCardProps) {
   return (
-    <Card className="flex items-start gap-4">
-      <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0', bg)}>
-        <span className={cn('w-5 h-5', color)}>{icon}</span>
+    <Card className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-4">
+      <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', bg, color)}>
+        {icon}
       </div>
       <div className="min-w-0">
         <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{title}</p>
-        <p className={cn('text-xl font-bold mt-0.5 truncate', color)}>{formatPeso(value)}</p>
+        <p className={cn('text-base sm:text-xl font-bold mt-0.5', color)}>{formatPeso(value)}</p>
         {subtext && <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{subtext}</p>}
       </div>
     </Card>
@@ -74,9 +74,9 @@ export default function DashboardPage() {
   const isNegative = summary.netCashflow < 0;
 
   return (
-    <div className="space-y-6 max-w-6xl">
-      {/* Period header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+    <div className="space-y-6">
+      {/* Period header — hidden on mobile (already shown in top header bar) */}
+      <div className="hidden sm:flex flex-col sm:flex-row sm:items-center gap-2">
         <div>
           <h1 className="page-title">{activePeriod!.name}</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -91,26 +91,23 @@ export default function DashboardPage() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <SummaryCard title="Total Income" value={summary.totalIncome} icon={<TrendingUp />} color="text-emerald-600 dark:text-emerald-400" bg="bg-emerald-50 dark:bg-emerald-900/20" />
-        <SummaryCard title="Total Bills" value={summary.totalBills} icon={<Receipt />} color="text-amber-600 dark:text-amber-400" bg="bg-amber-50 dark:bg-amber-900/20" subtext={`${formatPeso(summary.totalPaidBills)} paid`} />
-        <SummaryCard title="Total Expenses" value={summary.totalExpenses} icon={<CreditCard />} color="text-red-600 dark:text-red-400" bg="bg-red-50 dark:bg-red-900/20" />
-        <SummaryCard title="Debt Payments" value={summary.totalDebtPayments} icon={<TrendingDown />} color="text-violet-600 dark:text-violet-400" bg="bg-violet-50 dark:bg-violet-900/20" />
-      </div>
-
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-        <SummaryCard title="Savings" value={summary.totalSavingsContributions} icon={<PiggyBank />} color="text-sky-600 dark:text-sky-400" bg="bg-sky-50 dark:bg-sky-900/20" />
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <SummaryCard title="Total Income" value={summary.totalIncome} icon={<TrendingUp className="w-5 h-5" />} color="text-emerald-600 dark:text-emerald-400" bg="bg-emerald-50 dark:bg-emerald-900/20" />
+        <SummaryCard title="Total Bills" value={summary.totalBills} icon={<Receipt className="w-5 h-5" />} color="text-amber-600 dark:text-amber-400" bg="bg-amber-50 dark:bg-amber-900/20" subtext={`${formatPeso(summary.totalPaidBills)} paid`} />
+        <SummaryCard title="Total Expenses" value={summary.totalExpenses} icon={<CreditCard className="w-5 h-5" />} color="text-red-600 dark:text-red-400" bg="bg-red-50 dark:bg-red-900/20" />
+        <SummaryCard title="Debt Payments" value={summary.totalDebtPayments} icon={<TrendingDown className="w-5 h-5" />} color="text-violet-600 dark:text-violet-400" bg="bg-violet-50 dark:bg-violet-900/20" />
+        <SummaryCard title="Savings" value={summary.totalSavingsContributions} icon={<PiggyBank className="w-5 h-5" />} color="text-sky-600 dark:text-sky-400" bg="bg-sky-50 dark:bg-sky-900/20" />
         <SummaryCard
           title="Left to Spend"
           value={summary.leftToSpend}
-          icon={<Wallet />}
+          icon={<Wallet className="w-5 h-5" />}
           color={summary.leftToSpend >= 0 ? 'text-teal-600 dark:text-teal-400' : 'text-red-600 dark:text-red-400'}
           bg={summary.leftToSpend >= 0 ? 'bg-teal-50 dark:bg-teal-900/20' : 'bg-red-50 dark:bg-red-900/20'}
         />
         <SummaryCard
           title="Net Cashflow"
           value={summary.netCashflow}
-          icon={<Activity />}
+          icon={<Activity className="w-5 h-5" />}
           color={isNegative ? 'text-red-600 dark:text-red-400' : 'text-primary-600 dark:text-primary-400'}
           bg={isNegative ? 'bg-red-50 dark:bg-red-900/20' : 'bg-primary-50 dark:bg-primary-900/20'}
         />

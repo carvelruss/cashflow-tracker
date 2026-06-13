@@ -13,7 +13,7 @@ export default function Header({ onMobileMenuOpen, theme, onThemeToggle }: Heade
   const { activePeriod, periods, setActivePeriod, loading } = useBudgetPeriod();
 
   return (
-    <header className="h-14 flex items-center gap-3 px-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shrink-0">
+    <header className="h-16 flex items-center gap-3 px-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shrink-0">
       {/* Mobile menu button */}
       <button
         onClick={onMobileMenuOpen}

@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { PiggyBank, Plus, Edit2, Trash2, PlusCircle } from 'lucide-react';
 import { api } from '../lib/api';
 import { useBudgetPeriod } from '../context/BudgetPeriodContext';
@@ -56,12 +57,13 @@ export default function SavingsPage() {
 
   const totalCurrent = goals.reduce((s, g) => s + g.current_amount, 0);
   const totalTarget = goals.reduce((s, g) => s + g.target_amount, 0);
+  const isClosed = activePeriod?.status === 'closed';
 
   if (!activePeriod) return <EmptyState icon={<PiggyBank className="w-6 h-6" />} title="No Budget Period Selected" />;
   if (loading && goals.length === 0) return <PageLoader />;
 
   return (
-    <div className="max-w-4xl space-y-4">
+    <div className="space-y-4">
       <div className="page-header">
         <div>
           <h1 className="page-title">Savings Goals</h1>
@@ -70,13 +72,14 @@ export default function SavingsPage() {
             {totalTarget > 0 && <span className="text-slate-400"> of {formatPeso(totalTarget)} target</span>}
           </p>
         </div>
-        <Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Goal</Button>
+        {!isClosed && <Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Goal</Button>}
       </div>
 
+      {isClosed && <Alert variant="warning">This period is closed and read-only. <Link to="/budget-periods" className="underline font-medium">Create a new period</Link> to add entries.</Alert>}
       {error && <Alert variant="error">{error}</Alert>}
 
       {goals.length === 0 && !loading ? (
-        <EmptyState icon={<PiggyBank className="w-6 h-6" />} title="No savings goals" description="Set savings goals and track your progress." action={<Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Goal</Button>} />
+        <EmptyState icon={<PiggyBank className="w-6 h-6" />} title="No savings goals" description="Set savings goals and track your progress." />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {goals.map(goal => {
@@ -110,7 +113,7 @@ export default function SavingsPage() {
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-slate-500">{formatPeso(goal.target_amount - goal.current_amount)} remaining</p>
                   <div className="flex gap-1">
-                    <Button size="xs" variant="secondary" icon={<PlusCircle className="w-3 h-3" />} onClick={() => setContributing(goal)}>Add</Button>
+                    {!isClosed && <Button size="xs" variant="secondary" icon={<PlusCircle className="w-3 h-3" />} onClick={() => setContributing(goal)}>Add</Button>}
                     <button onClick={() => setEditing(goal)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"><Edit2 className="w-4 h-4" /></button>
                     <button onClick={() => setDeleting(goal)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </div>

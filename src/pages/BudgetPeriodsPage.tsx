@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, Calendar, Lock, Edit2, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
 import { useBudgetPeriod } from '../context/BudgetPeriodContext';
-import { formatDate, currentMonthStart, currentMonthEnd } from '../utils/date';
+import { formatDate } from '../utils/date';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import Input from '../components/ui/Input';
+import DatePicker from '../components/ui/DatePicker';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import EmptyState from '../components/ui/EmptyState';
@@ -24,17 +25,22 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 function PeriodForm({ period, onSubmit, onCancel }: { period?: BudgetPeriod; onSubmit: (d: FormData) => Promise<void>; onCancel: () => void }) {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: period ? { name: period.name, start_date: period.start_date, end_date: period.end_date }
-      : { start_date: currentMonthStart(), end_date: currentMonthEnd() },
+    defaultValues: period
+      ? { name: period.name, start_date: period.start_date, end_date: period.end_date }
+      : {},
   });
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Input label="Period Name" placeholder="e.g., June 2026 Budget" required error={errors.name?.message} {...register('name')} />
       <div className="grid grid-cols-2 gap-3">
-        <Input label="Start Date" type="date" required error={errors.start_date?.message} {...register('start_date')} />
-        <Input label="End Date" type="date" required error={errors.end_date?.message} {...register('end_date')} />
+        <Controller control={control} name="start_date" render={({ field }) => (
+          <DatePicker label="Start Date" required error={errors.start_date?.message} value={field.value ?? ''} onChange={field.onChange} />
+        )} />
+        <Controller control={control} name="end_date" render={({ field }) => (
+          <DatePicker label="End Date" required error={errors.end_date?.message} value={field.value ?? ''} onChange={field.onChange} />
+        )} />
       </div>
       <div className="flex gap-2 justify-end pt-2">
         <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
@@ -87,7 +93,7 @@ export default function BudgetPeriodsPage() {
   };
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="space-y-6">
       <div className="page-header">
         <div>
           <h1 className="page-title">Budget Periods</h1>
@@ -99,7 +105,7 @@ export default function BudgetPeriodsPage() {
       {error && <Alert variant="error">{error}</Alert>}
 
       {periods.length === 0 ? (
-        <EmptyState icon={<Calendar className="w-6 h-6" />} title="No budget periods" description="Create your first budget period to start tracking." action={<Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Create Period</Button>} />
+        <EmptyState icon={<Calendar className="w-6 h-6" />} title="No budget periods" description="Use the New Period button above to create your first budget period." />
       ) : (
         <div className="space-y-3">
           {periods.map(p => (

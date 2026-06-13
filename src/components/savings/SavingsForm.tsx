@@ -1,9 +1,10 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../ui/Input';
 import Textarea from '../ui/Textarea';
 import Button from '../ui/Button';
+import DatePicker from '../ui/DatePicker';
 import type { SavingsGoal } from '../../types';
 
 const schema = z.object({
@@ -23,7 +24,7 @@ interface SavingsFormProps {
 }
 
 export default function SavingsForm({ goal, budgetPeriodId, onSubmit, onCancel }: SavingsFormProps) {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: goal ? {
       goal_name: goal.goal_name, target_amount: goal.target_amount,
@@ -39,11 +40,13 @@ export default function SavingsForm({ goal, budgetPeriodId, onSubmit, onCancel }
   return (
     <form onSubmit={submit} className="space-y-4">
       <Input label="Goal Name" placeholder="e.g., Emergency Fund, Japan Trip" required error={errors.goal_name?.message} {...register('goal_name')} />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 items-end">
         <Input label="Target Amount (₱)" type="number" step="0.01" required error={errors.target_amount?.message} {...register('target_amount')} />
         <Input label="Current Amount (₱)" type="number" step="0.01" error={errors.current_amount?.message} {...register('current_amount')} />
       </div>
-      <Input label="Target Date" type="date" error={errors.target_date?.message} {...register('target_date')} />
+      <Controller control={control} name="target_date" render={({ field }) => (
+        <DatePicker label="Target Date" error={errors.target_date?.message} value={field.value ?? ''} onChange={field.onChange} />
+      )} />
       <Textarea label="Notes" placeholder="Optional notes" rows={2} {...register('notes')} />
       <div className="flex gap-2 justify-end pt-2">
         <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>

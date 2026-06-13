@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { TrendingUp, Plus, Edit2, Trash2, Search } from 'lucide-react';
 import { api } from '../lib/api';
 import { useBudgetPeriod } from '../context/BudgetPeriodContext';
@@ -60,29 +61,31 @@ export default function IncomePage() {
   };
 
   const total = income.reduce((s, i) => s + i.amount, 0);
+  const isClosed = activePeriod?.status === 'closed';
 
   if (!activePeriod) return <EmptyState icon={<TrendingUp className="w-6 h-6" />} title="No Budget Period Selected" description="Select or create a budget period to manage income." />;
   if (loading && income.length === 0) return <PageLoader />;
 
   return (
-    <div className="max-w-4xl space-y-4">
+    <div className="space-y-4">
       <div className="page-header">
         <div>
           <h1 className="page-title">Income</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Total: <span className="font-semibold text-emerald-600 dark:text-emerald-400">{formatPeso(total)}</span></p>
         </div>
-        <Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Income</Button>
+        {!isClosed && <Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Income</Button>}
       </div>
 
+      {isClosed && <Alert variant="warning">This period is closed and read-only. <Link to="/budget-periods" className="underline font-medium">Create a new period</Link> to add entries.</Alert>}
       {error && <Alert variant="error">{error}</Alert>}
 
       <Input placeholder="Search income sources…" leftIcon={<Search className="w-4 h-4" />} value={search} onChange={e => setSearch(e.target.value)} />
 
       {income.length === 0 && !loading ? (
-        <EmptyState icon={<TrendingUp className="w-6 h-6" />} title="No income entries" description="Add your first income entry for this period." action={<Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Income</Button>} />
+        <EmptyState icon={<TrendingUp className="w-6 h-6" />} title="No income entries" description="Add your first income entry for this period." />
       ) : (
         <Card padding="none">
-          <CardHeader title="Income Entries" action={<span className="text-sm font-semibold text-emerald-600">{formatPeso(total)}</span>} />
+          <CardHeader title="Income Entries" className="px-5 pt-5" />
           <div className="divide-y divide-slate-100 dark:divide-slate-700">
             {income.map(item => (
               <div key={item.id} className="flex items-center gap-4 px-5 py-3">

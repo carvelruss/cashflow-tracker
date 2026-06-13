@@ -30,7 +30,7 @@ export default function AppLayout() {
   const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+    <div className="flex h-dvh overflow-hidden bg-slate-50 dark:bg-slate-950">
       <Sidebar collapsed={collapsed} onToggle={toggleSidebar} />
       <MobileNav isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
@@ -40,7 +40,7 @@ export default function AppLayout() {
           theme={theme}
           onThemeToggle={toggleTheme}
         />
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 pb-safe">
           <Outlet />
         </main>
       </div>

@@ -22,9 +22,6 @@ const COLORS = {
   cashflow: '#6366f1',
 };
 
-const tooltipStyle = {
-  contentStyle: { backgroundColor: 'var(--tooltip-bg, #1e293b)', border: '1px solid #334155', borderRadius: '8px', color: '#f1f5f9' },
-};
 
 function PesoTooltip({ active, payload, label }: { active?: boolean; payload?: { name: string; value: number; color: string }[]; label?: string }) {
   if (!active || !payload?.length) return null;
@@ -81,7 +78,7 @@ export default function AnalyticsPage() {
   const isPositive = summary.netCashflow >= 0;
 
   return (
-    <div className="max-w-6xl space-y-6">
+    <div className="space-y-6">
       <div>
         <h1 className="page-title">Analytics</h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{activePeriod.name}</p>
@@ -139,12 +136,17 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card>
             <CardHeader title="Spending Breakdown" />
-            <ResponsiveContainer width="100%" height={220}>
+            <ResponsiveContainer width="100%" height={200}>
               <PieChart>
-                <Pie data={spendingBreakdown} cx="50%" cy="50%" outerRadius={80} innerRadius={40} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
+                <Pie data={spendingBreakdown} cx="50%" cy="50%" outerRadius="45%" innerRadius="25%" dataKey="value">
                   {spendingBreakdown.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                 </Pie>
-                <Tooltip formatter={(v: number) => formatPeso(v)} contentStyle={tooltipStyle.contentStyle} />
+                <Tooltip
+                  formatter={(v: number) => formatPeso(v)}
+                  contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
+                  labelStyle={{ color: '#f1f5f9', fontWeight: 600 }}
+                  itemStyle={{ color: '#f1f5f9' }}
+                />
               </PieChart>
             </ResponsiveContainer>
             <div className="flex flex-wrap gap-3 justify-center mt-2">
@@ -163,7 +165,7 @@ export default function AnalyticsPage() {
               <BarChart data={budgetVsActual} barGap={4}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
                 <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={v => `₱${(v / 1000).toFixed(0)}k`} />
+                <YAxis width={40} tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={v => `₱${(v / 1000).toFixed(0)}k`} />
                 <Tooltip content={<PesoTooltip />} />
                 <Legend wrapperStyle={{ fontSize: 12, color: '#94a3b8' }} />
                 <Bar dataKey="budgeted" fill="#6366f1" radius={[4, 4, 0, 0]} name="Budgeted" />
@@ -192,7 +194,7 @@ export default function AnalyticsPage() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
               <XAxis dataKey="period" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-              <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={v => `₱${(v / 1000).toFixed(0)}k`} />
+              <YAxis width={40} tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={v => `₱${(v / 1000).toFixed(0)}k`} />
               <Tooltip content={<PesoTooltip />} />
               <Legend wrapperStyle={{ fontSize: 12, color: '#94a3b8' }} />
               <Area type="monotone" dataKey="income" stroke={COLORS.income} fill="url(#incomeGrad)" strokeWidth={2} name="income" />

@@ -1,9 +1,10 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../ui/Input';
 import Textarea from '../ui/Textarea';
 import Button from '../ui/Button';
+import DatePicker from '../ui/DatePicker';
 import type { Income } from '../../types';
 import { formatDateInput } from '../../utils/date';
 
@@ -24,7 +25,7 @@ interface IncomeFormProps {
 }
 
 export default function IncomeForm({ income, budgetPeriodId, onSubmit, onCancel }: IncomeFormProps) {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: income ? {
       source: income.source,
@@ -46,7 +47,9 @@ export default function IncomeForm({ income, budgetPeriodId, onSubmit, onCancel 
       <Input label="Income Source" placeholder="e.g., Salary, Freelance" required error={errors.source?.message} {...register('source')} />
       <Input label="Description" placeholder="Optional description" error={errors.description?.message} {...register('description')} />
       <Input label="Amount (₱)" type="number" step="0.01" min="0.01" required error={errors.amount?.message} {...register('amount')} />
-      <Input label="Date Received" type="date" required error={errors.date_received?.message} {...register('date_received')} />
+      <Controller control={control} name="date_received" render={({ field }) => (
+        <DatePicker label="Date Received" required error={errors.date_received?.message} value={field.value ?? ''} onChange={field.onChange} />
+      )} />
       <Textarea label="Notes" placeholder="Optional notes" rows={2} {...register('notes')} />
       <div className="flex gap-2 justify-end pt-2">
         <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>

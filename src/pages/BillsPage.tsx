@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { Receipt, Plus, Edit2, Trash2, Search, CheckCircle2, Circle } from 'lucide-react';
 import { api } from '../lib/api';
 import { useBudgetPeriod } from '../context/BudgetPeriodContext';
@@ -66,12 +67,13 @@ export default function BillsPage() {
   const paid = bills.filter(b => b.status === 'paid').reduce((s, b) => s + b.amount, 0);
   const unpaid = bills.filter(b => b.status === 'unpaid').reduce((s, b) => s + b.amount, 0);
   const categoryOptions = BILL_CATEGORIES.map(c => ({ value: c, label: c }));
+  const isClosed = activePeriod?.status === 'closed';
 
   if (!activePeriod) return <EmptyState icon={<Receipt className="w-6 h-6" />} title="No Budget Period Selected" />;
   if (loading && bills.length === 0) return <PageLoader />;
 
   return (
-    <div className="max-w-4xl space-y-4">
+    <div className="space-y-4">
       <div className="page-header">
         <div>
           <h1 className="page-title">Bills</h1>
@@ -81,9 +83,10 @@ export default function BillsPage() {
             <span className="text-amber-600 font-medium">{formatPeso(unpaid)} unpaid</span>
           </p>
         </div>
-        <Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Bill</Button>
+        {!isClosed && <Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Bill</Button>}
       </div>
 
+      {isClosed && <Alert variant="warning">This period is closed and read-only. <Link to="/budget-periods" className="underline font-medium">Create a new period</Link> to add entries.</Alert>}
       {error && <Alert variant="error">{error}</Alert>}
 
       <div className="flex flex-col sm:flex-row gap-2">
@@ -93,10 +96,10 @@ export default function BillsPage() {
       </div>
 
       {bills.length === 0 && !loading ? (
-        <EmptyState icon={<Receipt className="w-6 h-6" />} title="No bills found" action={<Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowAdd(true)}>Add Bill</Button>} />
+        <EmptyState icon={<Receipt className="w-6 h-6" />} title="No bills found" />
       ) : (
         <Card padding="none">
-          <CardHeader title="Bills" action={<span className="text-sm text-slate-500">{bills.length} items</span>} />
+          <CardHeader title="Bills" action={<span className="text-sm text-slate-500">{bills.length} items</span>} className="px-5 pt-5" />
           <div className="divide-y divide-slate-100 dark:divide-slate-700">
             {bills.map(bill => {
               const overdue = bill.status === 'unpaid' && isOverdue(bill.due_date);
@@ -107,12 +110,12 @@ export default function BillsPage() {
                     {bill.status === 'paid' ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <Circle className="w-5 h-5" />}
                   </button>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className={cn('text-sm font-medium truncate', bill.status === 'paid' && 'line-through text-slate-400')}>{bill.name}</p>
+                    <p className={cn('text-sm font-medium truncate', bill.status === 'paid' && 'line-through text-slate-400')}>{bill.name}</p>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{bill.category} · Due {formatDate(bill.due_date)}</p>
                       {overdue && <Badge variant="danger" size="sm">Overdue</Badge>}
                       {soon && <Badge variant="warning" size="sm">Due Soon</Badge>}
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{bill.category} · Due {formatDate(bill.due_date)}</p>
                   </div>
                   <p className="font-semibold text-sm shrink-0">{formatPeso(bill.amount)}</p>
                   <div className="flex gap-1 shrink-0">

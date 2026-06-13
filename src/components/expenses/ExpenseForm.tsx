@@ -1,10 +1,11 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../ui/Input';
 import Select from '../ui/Select';
 import Textarea from '../ui/Textarea';
 import Button from '../ui/Button';
+import DatePicker from '../ui/DatePicker';
 import type { Expense } from '../../types';
 import { EXPENSE_CATEGORIES } from '../../types';
 import { formatDateInput } from '../../utils/date';
@@ -26,7 +27,7 @@ interface ExpenseFormProps {
 }
 
 export default function ExpenseForm({ expense, budgetPeriodId, onSubmit, onCancel }: ExpenseFormProps) {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: expense ? {
       name: expense.name, category: expense.category,
@@ -45,7 +46,9 @@ export default function ExpenseForm({ expense, budgetPeriodId, onSubmit, onCance
       <Input label="Expense Name" placeholder="e.g., Grocery, Uber" required error={errors.name?.message} {...register('name')} />
       <Select label="Category" required options={catOptions} placeholder="Select category" error={errors.category?.message} {...register('category')} />
       <Input label="Amount (₱)" type="number" step="0.01" min="0.01" required error={errors.amount?.message} {...register('amount')} />
-      <Input label="Date" type="date" required error={errors.date?.message} {...register('date')} />
+      <Controller control={control} name="date" render={({ field }) => (
+        <DatePicker label="Date" required error={errors.date?.message} value={field.value ?? ''} onChange={field.onChange} />
+      )} />
       <Textarea label="Notes" placeholder="Optional notes" rows={2} {...register('notes')} />
       <div className="flex gap-2 justify-end pt-2">
         <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>

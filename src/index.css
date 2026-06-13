@@ -66,6 +66,17 @@
   }
 }
 
+/* Safe area inset for iOS notch / home indicator */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+@media (min-width: 640px) {
+  .pb-safe {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+}
+
 /* Smooth transitions for theme switching */
 *, *::before, *::after {
   transition-property: background-color, border-color, color;

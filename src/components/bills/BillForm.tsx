@@ -1,10 +1,11 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../ui/Input';
 import Select from '../ui/Select';
 import Textarea from '../ui/Textarea';
 import Button from '../ui/Button';
+import DatePicker from '../ui/DatePicker';
 import type { Bill } from '../../types';
 import { BILL_CATEGORIES } from '../../types';
 import { formatDateInput } from '../../utils/date';
@@ -26,7 +27,7 @@ interface BillFormProps {
 }
 
 export default function BillForm({ bill, budgetPeriodId, onSubmit, onCancel }: BillFormProps) {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: bill ? {
       name: bill.name, amount: bill.amount, due_date: bill.due_date,
@@ -44,7 +45,9 @@ export default function BillForm({ bill, budgetPeriodId, onSubmit, onCancel }: B
     <form onSubmit={submit} className="space-y-4">
       <Input label="Bill Name" placeholder="e.g., Electricity, Netflix" required error={errors.name?.message} {...register('name')} />
       <Input label="Amount (₱)" type="number" step="0.01" min="0.01" required error={errors.amount?.message} {...register('amount')} />
-      <Input label="Due Date" type="date" required error={errors.due_date?.message} {...register('due_date')} />
+      <Controller control={control} name="due_date" render={({ field }) => (
+        <DatePicker label="Due Date" required error={errors.due_date?.message} value={field.value ?? ''} onChange={field.onChange} />
+      )} />
       <Select label="Category" required options={categoryOptions} placeholder="Select category" error={errors.category?.message} {...register('category')} />
       <Textarea label="Notes" placeholder="Optional notes" rows={2} {...register('notes')} />
       <div className="flex gap-2 justify-end pt-2">
